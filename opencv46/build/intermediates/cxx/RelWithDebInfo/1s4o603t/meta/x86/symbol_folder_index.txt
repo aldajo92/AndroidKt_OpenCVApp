@@ -1,0 +1,1 @@
+/home/aldajo92/AndroidStudioProjects/OpenCVApplication/opencv46/build/intermediates/cxx/RelWithDebInfo/1s4o603t/obj/x86
