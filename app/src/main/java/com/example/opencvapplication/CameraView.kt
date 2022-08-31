@@ -16,6 +16,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AddCircle
 import androidx.compose.material.icons.filled.Call
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -72,7 +73,7 @@ fun CameraView() {
             },
             content = {
                 Icon(
-                    imageVector = Icons.Default.Call,
+                    imageVector = Icons.Default.AddCircle,
                     contentDescription = "Take picture",
                     tint = Color.White,
                     modifier = Modifier
