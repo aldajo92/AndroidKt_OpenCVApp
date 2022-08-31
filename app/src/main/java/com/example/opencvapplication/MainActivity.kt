@@ -2,6 +2,7 @@ package com.example.opencvapplication
 
 import android.Manifest
 import android.content.pm.PackageManager
+import android.graphics.Bitmap
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
@@ -19,6 +20,10 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.opencv.android.OpenCVLoader
+import org.opencv.android.Utils
+import org.opencv.core.Mat
+import org.opencv.core.Point
+import java.util.*
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
@@ -45,17 +50,11 @@ class MainActivity : AppCompatActivity() {
 
         ivBitmap = viewBinding.ivBitmap
 
-        // Set up the listeners for take photo and video capture buttons
-        viewBinding.imageCaptureButton.setOnClickListener { takePhoto() }
-        viewBinding.videoCaptureButton.setOnClickListener { captureVideo() }
-
         cameraExecutor = Executors.newSingleThreadExecutor()
 
     }
 
-    private fun takePhoto() {}
-
-    private fun captureVideo() {}
+    external fun findDocumentCorners(inputMat: Mat, corners: Vector<Point>)
 
     private fun startCamera() {
         val cameraProviderFuture = ProcessCameraProvider.getInstance(this)
@@ -76,6 +75,13 @@ class MainActivity : AppCompatActivity() {
                 .build()
                 .also {
                     it.setAnalyzer(cameraExecutor, OpenCVAnalyzer { bitmap ->
+                        val mat = Mat()
+                        val vector = Vector<Point>()
+                        val bmp32: Bitmap = bitmap.copy(Bitmap.Config.ARGB_8888, true)
+                        Utils.bitmapToMat(bmp32, mat)
+
+                        findDocumentCorners(mat, vector)
+
                         CoroutineScope(Dispatchers.Main).launch {
                             ivBitmap?.setImageBitmap(bitmap)
                         }
@@ -132,7 +138,7 @@ class MainActivity : AppCompatActivity() {
             else
                 Log.d("aldajo", "OpenCV loaded")
 
-//            System.loadLibrary("androidndkexample")
+            System.loadLibrary("native-lib")
         }
         private const val TAG = "CameraXApp"
         private const val FILENAME_FORMAT = "yyyy-MM-dd-HH-mm-ss-SSS"

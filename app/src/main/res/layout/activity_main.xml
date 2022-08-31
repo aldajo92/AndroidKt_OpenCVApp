@@ -17,19 +17,4 @@
         android:layout_height="200dp"
         android:layout_gravity="center"/>
 
-    <Button
-        android:id="@+id/image_capture_button"
-        android:layout_width="110dp"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:text="Take photo" />
-
-    <Button
-        android:id="@+id/video_capture_button"
-        android:layout_width="110dp"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:text="capture" />
-
-
 </LinearLayout>
