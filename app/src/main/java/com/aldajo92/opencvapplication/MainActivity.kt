@@ -1,8 +1,7 @@
-package com.example.opencvapplication
+package com.aldajo92.opencvapplication
 
 import android.Manifest
 import android.content.pm.PackageManager
-import android.graphics.Bitmap
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
@@ -15,15 +14,11 @@ import androidx.camera.core.Preview
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import com.example.opencvapplication.databinding.ActivityMainBinding
+import com.aldajo92.opencvapplication.databinding.ActivityMainBinding
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.opencv.android.OpenCVLoader
-import org.opencv.android.Utils
-import org.opencv.core.Mat
-import org.opencv.core.Point
-import java.util.*
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
@@ -54,7 +49,7 @@ class MainActivity : AppCompatActivity() {
 
     }
 
-    external fun findDocumentCorners(inputMat: Mat, corners: Vector<Point>)
+    external fun processFrame(matAddr: Long)
 
     private fun startCamera() {
         val cameraProviderFuture = ProcessCameraProvider.getInstance(this)
@@ -75,13 +70,6 @@ class MainActivity : AppCompatActivity() {
                 .build()
                 .also {
                     it.setAnalyzer(cameraExecutor, OpenCVAnalyzer { bitmap ->
-                        val mat = Mat()
-                        val vector = Vector<Point>()
-                        val bmp32: Bitmap = bitmap.copy(Bitmap.Config.ARGB_8888, true)
-                        Utils.bitmapToMat(bmp32, mat)
-
-                        findDocumentCorners(mat, vector)
-
                         CoroutineScope(Dispatchers.Main).launch {
                             ivBitmap?.setImageBitmap(bitmap)
                         }

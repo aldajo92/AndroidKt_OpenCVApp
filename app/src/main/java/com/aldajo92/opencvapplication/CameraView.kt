@@ -1,4 +1,4 @@
-package com.example.opencvapplication
+package com.aldajo92.opencvapplication
 
 import android.content.Context
 import android.util.Log
@@ -17,7 +17,6 @@ import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AddCircle
-import androidx.compose.material.icons.filled.Call
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember

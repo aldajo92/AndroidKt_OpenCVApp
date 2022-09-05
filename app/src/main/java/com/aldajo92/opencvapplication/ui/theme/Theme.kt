@@ -1,4 +1,4 @@
-package com.example.opencvapplication.ui.theme
+package com.aldajo92.opencvapplication.ui.theme
 
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material.MaterialTheme

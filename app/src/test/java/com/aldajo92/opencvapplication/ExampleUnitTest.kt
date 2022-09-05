@@ -1,4 +1,4 @@
-package com.example.opencvapplication
+package com.aldajo92.opencvapplication
 
 import org.junit.Test
 

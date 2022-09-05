@@ -1,15 +1,41 @@
 #include <opencv2/core/core.hpp>
+#include <opencv2/imgproc/imgproc.hpp>
 #include <opencv2/imgproc.hpp>
 #include <opencv2/imgcodecs.hpp>
 #include <opencv2/highgui/highgui.hpp>
-inline double angle(const cv::Point& pt1, const cv::Point& pt2, const cv::Point& pt0) {
+
+#include <jni.h>
+
+using namespace cv;
+
+//Java_com_aldajo92_nativeopencvandroidtemplate_MainActivity_adaptiveThresholdFromJNI(JNIEnv *env,
+//jobject instance,
+//        jlong matAddr) {
+//
+//// get Mat from raw address
+//Mat &mat = *(Mat *) matAddr;
+//
+//clock_t begin = clock();
+//
+//cv::adaptiveThreshold(mat, mat, 255, ADAPTIVE_THRESH_MEAN_C, THRESH_BINARY_INV, 21, 5);
+//
+//// log computation time to Android Logcat
+//double totalTime = double(clock() - begin) / CLOCKS_PER_SEC;
+//__android_log_print(ANDROID_LOG_INFO, TAG, "adaptiveThreshold computation time = %f seconds\n",
+//totalTime);
+//}
+//}
+
+inline double angle(const cv::Point &pt1, const cv::Point &pt2, const cv::Point &pt0) {
     double dx1 = pt1.x - pt0.x;
     double dy1 = pt1.y - pt0.y;
     double dx2 = pt2.x - pt0.x;
     double dy2 = pt2.y - pt0.y;
-    return (dx1*dx2 + dy1*dy2)/sqrt((dx1*dx1 + dy1*dy1)*(dx2*dx2 + dy2*dy2) + 1e-10);
+    return (dx1 * dx2 + dy1 * dy2) /
+           sqrt((dx1 * dx1 + dy1 * dy1) * (dx2 * dx2 + dy2 * dy2) + 1e-10);
 }
-inline void findDocumentCorners(const cv::Mat& image, std::vector<cv::Point>& corners) {
+
+inline void findDocumentCorners(const cv::Mat &image, std::vector<cv::Point> &corners) {
     std::vector<std::vector<cv::Point>> squares;
     cv::Mat pyr, img, gray0(image.size(), CV_8U), gray;
     cv::pyrDown(image, pyr, cv::Size(image.cols / 2, image.rows / 2));
@@ -51,4 +77,32 @@ inline void findDocumentCorners(const cv::Mat& image, std::vector<cv::Point>& co
             }
         }
     }
+}
+
+extern "C" {
+void JNICALL
+//Java_com_aldajo92_opencvapplication_MainActivity_processFrame(JNIEnv *env,
+Java_com_aldajo92_opencvapplication_OpenCVAnalyzer_processFrame(JNIEnv *env,
+                                                              jobject instance,
+                                                              jlong matAddr) {
+    cv::Mat &inputMat = *(cv::Mat *) matAddr;
+    std::vector<Point> corners;
+
+//    findDocumentCorners(matAddr, corners)
+    findDocumentCorners(inputMat, corners);
+
+    for (int i = 0; i < corners.size(); ++i) {
+        cv::circle(inputMat, corners[i], 6, cv::Scalar(0, 255, 0), 2);
+        if (i == 0) {
+            cv::line(inputMat, corners[corners.size() - 1], corners[i], cv::Scalar(0, 255, 0), 3);
+        } else {
+            cv::line(inputMat, corners[i - 1], corners[i], cv::Scalar(0, 255, 0), 3);
+        }
+    }
+
+//    jobjectArray retobjarr = (jobjectArray)env->NewObjectArray(2, env->FindClass("java/lang/Object"), NULL);
+//
+//    return retobjarr;
+
+}
 }

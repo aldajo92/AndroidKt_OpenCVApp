@@ -1,4 +1,4 @@
-package com.example.opencvapplication.ui.theme
+package com.aldajo92.opencvapplication.ui.theme
 
 import androidx.compose.material.Typography
 import androidx.compose.ui.text.TextStyle

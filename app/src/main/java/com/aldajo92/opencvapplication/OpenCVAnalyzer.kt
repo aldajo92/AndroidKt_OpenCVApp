@@ -1,8 +1,13 @@
-package com.example.opencvapplication
+package com.aldajo92.opencvapplication
 
 import android.graphics.Bitmap
 import androidx.camera.core.ImageAnalysis
 import androidx.camera.core.ImageProxy
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import org.opencv.android.Utils
+import org.opencv.core.Mat
 import java.nio.ByteBuffer
 
 class OpenCVAnalyzer(private val listener: (Bitmap) -> Unit) : ImageAnalysis.Analyzer {
@@ -38,13 +43,25 @@ class OpenCVAnalyzer(private val listener: (Bitmap) -> Unit) : ImageAnalysis.Ana
            return
        }
 
-//        Copy out RGB bits to our shared buffer
+       // Copy out RGB bits to our shared buffer
        image.use { bitmapBuffer.copyPixelsFromBuffer(image.planes[0].buffer)  }
 
-//        Process the image
-       val bitmap = bitmapBuffer.rotate()
-       listener(bitmap)
+//       CoroutineScope(Dispatchers.IO).launch{
+
+           // Process the image
+           val bitmap = bitmapBuffer.rotate()
+
+           val mat = Mat()
+
+           val bmp32: Bitmap = bitmap.copy(Bitmap.Config.ARGB_8888, true)
+           Utils.bitmapToMat(bmp32, mat)
+           processFrame(mat.nativeObjAddr)
+           Utils.matToBitmap(mat, bmp32)
+           listener(bmp32)
+//       }
    }
 
     private fun Bitmap.rotate() = Bitmap.createBitmap(this, 0, 0, this.width, this.height, rotationMatrix, true)
+
+    external fun processFrame(matAddr: Long)
 }
