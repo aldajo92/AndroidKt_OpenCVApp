@@ -1,11 +1,23 @@
 1<?xml version="1.0" encoding="utf-8"?>
 2<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-3    package="org.opencv" >
+3    package="com.aldajo92.scancv" >
 4
 5    <uses-sdk
 6        android:minSdkVersion="21"
-6-->/home/aldajo92/AndroidStudioProjects/OpenCVApplication/opencv46/java/AndroidManifest.xml
+6-->/home/aldajo92/AndroidStudioProjects/OpenCVApplication/opencv46/src/main/AndroidManifest.xml
 7        android:targetSdkVersion="32" />
-7-->/home/aldajo92/AndroidStudioProjects/OpenCVApplication/opencv46/java/AndroidManifest.xml
+7-->/home/aldajo92/AndroidStudioProjects/OpenCVApplication/opencv46/src/main/AndroidManifest.xml
 8
-9</manifest>
+9    <application>
+9-->/home/aldajo92/AndroidStudioProjects/OpenCVApplication/opencv46/src/main/AndroidManifest.xml:5:5-10:19
+10        <activity
+10-->/home/aldajo92/AndroidStudioProjects/OpenCVApplication/opencv46/src/main/AndroidManifest.xml:6:9-9:39
+11            android:name="com.aldajo92.scancv.DocScanCV2Activity"
+11-->/home/aldajo92/AndroidStudioProjects/OpenCVApplication/opencv46/src/main/AndroidManifest.xml:8:13-66
+12            android:exported="true"
+12-->/home/aldajo92/AndroidStudioProjects/OpenCVApplication/opencv46/src/main/AndroidManifest.xml:9:13-36
+13            android:theme="@style/Theme.AppCompat" />
+13-->/home/aldajo92/AndroidStudioProjects/OpenCVApplication/opencv46/src/main/AndroidManifest.xml:7:13-51
+14    </application>
+15
+16</manifest>

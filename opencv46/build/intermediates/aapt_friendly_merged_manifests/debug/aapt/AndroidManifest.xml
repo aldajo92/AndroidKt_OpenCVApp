@@ -1,9 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="org.opencv" >
+    package="com.aldajo92.scancv" >
 
     <uses-sdk
         android:minSdkVersion="21"
         android:targetSdkVersion="32" />
+
+    <application>
+        <activity
+            android:name="com.aldajo92.scancv.DocScanCV2Activity"
+            android:exported="true"
+            android:theme="@style/Theme.AppCompat" />
+    </application>
 
 </manifest>

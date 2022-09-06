@@ -1,25 +1,35 @@
 -- Merging decision tree log ---
 manifest
-ADDED from /home/aldajo92/AndroidStudioProjects/OpenCVApplication/opencv46/java/AndroidManifest.xml:2:1-4:12
-INJECTED from /home/aldajo92/AndroidStudioProjects/OpenCVApplication/opencv46/java/AndroidManifest.xml:2:1-4:12
-INJECTED from /home/aldajo92/AndroidStudioProjects/OpenCVApplication/opencv46/java/AndroidManifest.xml:2:1-4:12
+ADDED from /home/aldajo92/AndroidStudioProjects/OpenCVApplication/opencv46/src/main/AndroidManifest.xml:2:1-12:12
+INJECTED from /home/aldajo92/AndroidStudioProjects/OpenCVApplication/opencv46/src/main/AndroidManifest.xml:2:1-12:12
+INJECTED from /home/aldajo92/AndroidStudioProjects/OpenCVApplication/opencv46/src/main/AndroidManifest.xml:2:1-12:12
 	package
-		ADDED from /home/aldajo92/AndroidStudioProjects/OpenCVApplication/opencv46/java/AndroidManifest.xml:3:7-27
-		INJECTED from /home/aldajo92/AndroidStudioProjects/OpenCVApplication/opencv46/java/AndroidManifest.xml
-		INJECTED from /home/aldajo92/AndroidStudioProjects/OpenCVApplication/opencv46/java/AndroidManifest.xml
+		ADDED from /home/aldajo92/AndroidStudioProjects/OpenCVApplication/opencv46/src/main/AndroidManifest.xml:3:5-34
+		INJECTED from /home/aldajo92/AndroidStudioProjects/OpenCVApplication/opencv46/src/main/AndroidManifest.xml
+		INJECTED from /home/aldajo92/AndroidStudioProjects/OpenCVApplication/opencv46/src/main/AndroidManifest.xml
 	xmlns:android
-		ADDED from /home/aldajo92/AndroidStudioProjects/OpenCVApplication/opencv46/java/AndroidManifest.xml:2:11-69
+		ADDED from /home/aldajo92/AndroidStudioProjects/OpenCVApplication/opencv46/src/main/AndroidManifest.xml:2:11-69
+application
+ADDED from /home/aldajo92/AndroidStudioProjects/OpenCVApplication/opencv46/src/main/AndroidManifest.xml:5:5-10:19
+activity#com.aldajo92.scancv.DocScanCV2Activity
+ADDED from /home/aldajo92/AndroidStudioProjects/OpenCVApplication/opencv46/src/main/AndroidManifest.xml:6:9-9:39
+	android:exported
+		ADDED from /home/aldajo92/AndroidStudioProjects/OpenCVApplication/opencv46/src/main/AndroidManifest.xml:9:13-36
+	android:theme
+		ADDED from /home/aldajo92/AndroidStudioProjects/OpenCVApplication/opencv46/src/main/AndroidManifest.xml:7:13-51
+	android:name
+		ADDED from /home/aldajo92/AndroidStudioProjects/OpenCVApplication/opencv46/src/main/AndroidManifest.xml:8:13-66
 uses-sdk
-INJECTED from /home/aldajo92/AndroidStudioProjects/OpenCVApplication/opencv46/java/AndroidManifest.xml reason: use-sdk injection requested
-INJECTED from /home/aldajo92/AndroidStudioProjects/OpenCVApplication/opencv46/java/AndroidManifest.xml
-INJECTED from /home/aldajo92/AndroidStudioProjects/OpenCVApplication/opencv46/java/AndroidManifest.xml
-INJECTED from /home/aldajo92/AndroidStudioProjects/OpenCVApplication/opencv46/java/AndroidManifest.xml
-INJECTED from /home/aldajo92/AndroidStudioProjects/OpenCVApplication/opencv46/java/AndroidManifest.xml
+INJECTED from /home/aldajo92/AndroidStudioProjects/OpenCVApplication/opencv46/src/main/AndroidManifest.xml reason: use-sdk injection requested
+INJECTED from /home/aldajo92/AndroidStudioProjects/OpenCVApplication/opencv46/src/main/AndroidManifest.xml
+INJECTED from /home/aldajo92/AndroidStudioProjects/OpenCVApplication/opencv46/src/main/AndroidManifest.xml
+INJECTED from /home/aldajo92/AndroidStudioProjects/OpenCVApplication/opencv46/src/main/AndroidManifest.xml
+INJECTED from /home/aldajo92/AndroidStudioProjects/OpenCVApplication/opencv46/src/main/AndroidManifest.xml
 	android:targetSdkVersion
-		INJECTED from /home/aldajo92/AndroidStudioProjects/OpenCVApplication/opencv46/java/AndroidManifest.xml
-		ADDED from /home/aldajo92/AndroidStudioProjects/OpenCVApplication/opencv46/java/AndroidManifest.xml
-		INJECTED from /home/aldajo92/AndroidStudioProjects/OpenCVApplication/opencv46/java/AndroidManifest.xml
+		INJECTED from /home/aldajo92/AndroidStudioProjects/OpenCVApplication/opencv46/src/main/AndroidManifest.xml
+		ADDED from /home/aldajo92/AndroidStudioProjects/OpenCVApplication/opencv46/src/main/AndroidManifest.xml
+		INJECTED from /home/aldajo92/AndroidStudioProjects/OpenCVApplication/opencv46/src/main/AndroidManifest.xml
 	android:minSdkVersion
-		INJECTED from /home/aldajo92/AndroidStudioProjects/OpenCVApplication/opencv46/java/AndroidManifest.xml
-		ADDED from /home/aldajo92/AndroidStudioProjects/OpenCVApplication/opencv46/java/AndroidManifest.xml
-		INJECTED from /home/aldajo92/AndroidStudioProjects/OpenCVApplication/opencv46/java/AndroidManifest.xml
+		INJECTED from /home/aldajo92/AndroidStudioProjects/OpenCVApplication/opencv46/src/main/AndroidManifest.xml
+		ADDED from /home/aldajo92/AndroidStudioProjects/OpenCVApplication/opencv46/src/main/AndroidManifest.xml
+		INJECTED from /home/aldajo92/AndroidStudioProjects/OpenCVApplication/opencv46/src/main/AndroidManifest.xml

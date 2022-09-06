@@ -5,4 +5,7 @@ attr? show_fps
 id any
 id back
 id front
+id ivBitmap
+layout activity_camera
+layout activity_doc_scan_v2
 styleable CameraBridgeViewBase show_fps camera_id
