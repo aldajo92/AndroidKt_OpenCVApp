@@ -1,0 +1,27 @@
+{
+  "buildFiles": [
+    "/home/aldajo92/AndroidStudioProjects/OpenCVApplication/opencv46/libcxx_helper/CMakeLists.txt"
+  ],
+  "cleanCommandsComponents": [
+    [
+      "/home/aldajo92/Android/Sdk/cmake/3.18.1/bin/ninja",
+      "-C",
+      "/home/aldajo92/AndroidStudioProjects/OpenCVApplication/opencv46/.cxx/Debug/5pk6s162/armeabi-v7a",
+      "clean"
+    ]
+  ],
+  "buildTargetsCommandComponents": [
+    "/home/aldajo92/Android/Sdk/cmake/3.18.1/bin/ninja",
+    "-C",
+    "/home/aldajo92/AndroidStudioProjects/OpenCVApplication/opencv46/.cxx/Debug/5pk6s162/armeabi-v7a",
+    "{LIST_OF_TARGETS_TO_BUILD}"
+  ],
+  "libraries": {
+    "opencv_jni_shared::@6890427a1f51a3e7e1df": {
+      "artifactName": "opencv_jni_shared",
+      "abi": "armeabi-v7a",
+      "output": "/home/aldajo92/AndroidStudioProjects/OpenCVApplication/opencv46/.cxx/Debug/5pk6s162/armeabi-v7a/libopencv_jni_shared.a",
+      "runtimeFiles": []
+    }
+  }
+}

@@ -1,0 +1,1 @@
+/home/aldajo92/AndroidStudioProjects/OpenCVApplication/opencv46/build/intermediates/cxx/Debug/5pk6s162/obj/x86
