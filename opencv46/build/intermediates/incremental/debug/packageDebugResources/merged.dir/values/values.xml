@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="take_photo">Take photo</string>
     <declare-styleable name="CameraBridgeViewBase">
        <attr format="boolean" name="show_fps"/>
        <attr format="integer" name="camera_id">

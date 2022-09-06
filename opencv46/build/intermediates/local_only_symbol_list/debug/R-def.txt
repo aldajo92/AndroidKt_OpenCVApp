@@ -8,4 +8,5 @@ id front
 id ivBitmap
 layout activity_camera
 layout activity_doc_scan_v2
+string take_photo
 styleable CameraBridgeViewBase show_fps camera_id
