@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.aldajo92.scancv">
+
+    <application>
+        <activity
+            android:theme="@style/Theme.AppCompat"
+            android:name="com.aldajo92.scancv.DocScanCV2Activity"
+            android:exported="true" />
+    </application>
+
+</manifest>
