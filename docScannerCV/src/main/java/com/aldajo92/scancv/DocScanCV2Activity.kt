@@ -1,12 +1,10 @@
 package com.aldajo92.scancv
 
-import android.Manifest
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
-import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.widget.ImageView
@@ -26,11 +24,11 @@ import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
 class DocScanCV2Activity : AppCompatActivity() {
+
     private lateinit var viewBinding: ActivityDocScanV2Binding
     private lateinit var cameraExecutor: ExecutorService
 
     private lateinit var ivBitmap: ImageView
-
     private var imageResult: Bitmap? = null
 
     private val cvAnalyzer = OpenCVAnalyzer { bitmap ->
@@ -44,7 +42,16 @@ class DocScanCV2Activity : AppCompatActivity() {
         viewBinding = ActivityDocScanV2Binding.inflate(layoutInflater)
         setContentView(viewBinding.root)
 
-        // Request camera permissions
+        requestPermissions()
+        initUI()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        cameraExecutor.shutdown()
+    }
+
+    private fun requestPermissions(){
         if (allPermissionsGranted()) {
             startCamera()
         } else {
@@ -52,9 +59,10 @@ class DocScanCV2Activity : AppCompatActivity() {
                 this, REQUIRED_PERMISSIONS, REQUEST_CODE_PERMISSIONS
             )
         }
+    }
 
+    private fun initUI() {
         ivBitmap = viewBinding.ivBitmap
-
         viewBinding.button.setOnClickListener {
             cvAnalyzer.cropImageFromBitmap { bitmapResult ->
                 CoroutineScope(Dispatchers.Main).launch {
@@ -63,7 +71,6 @@ class DocScanCV2Activity : AppCompatActivity() {
                 }
             }
         }
-
         viewBinding.doneButton.setOnClickListener {
             imageResult?.let {
                 val imageUri = saveMediaToStorage(it)
@@ -74,9 +81,7 @@ class DocScanCV2Activity : AppCompatActivity() {
                 finish()
             }
         }
-
         cameraExecutor = Executors.newSingleThreadExecutor()
-
     }
 
 
@@ -85,7 +90,6 @@ class DocScanCV2Activity : AppCompatActivity() {
 
         cameraProviderFuture.addListener({
             val cameraProvider: ProcessCameraProvider = cameraProviderFuture.get()
-
             val imageAnalyzer = ImageAnalysis.Builder()
                 .setOutputImageFormat(ImageAnalysis.OUTPUT_IMAGE_FORMAT_RGBA_8888)
                 .build()
@@ -94,10 +98,7 @@ class DocScanCV2Activity : AppCompatActivity() {
                 }
 
             try {
-                // Unbind use cases before rebinding
                 cameraProvider.unbindAll()
-
-                // Bind use cases to camera
                 cameraProvider.bindToLifecycle(
                     this,
                     CameraSelector.DEFAULT_BACK_CAMERA,
@@ -115,11 +116,6 @@ class DocScanCV2Activity : AppCompatActivity() {
         ContextCompat.checkSelfPermission(
             baseContext, it
         ) == PackageManager.PERMISSION_GRANTED
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        cameraExecutor.shutdown()
     }
 
     override fun onRequestPermissionsResult(
@@ -148,18 +144,6 @@ class DocScanCV2Activity : AppCompatActivity() {
             else Log.d(this::class.java.name, "OpenCV loaded")
             System.loadLibrary("native-lib")
         }
-
-        private const val REQUEST_CODE_PERMISSIONS = 10
-
-        private val REQUIRED_PERMISSIONS =
-            mutableListOf(
-                Manifest.permission.CAMERA,
-                Manifest.permission.RECORD_AUDIO
-            ).apply {
-                if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.P) {
-                    add(Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                }
-            }.toTypedArray()
 
         const val PHOTO_IMAGE_BUNDLE_KEY = "PHOTO_IMAGE_BUNDLE_KEY"
 
