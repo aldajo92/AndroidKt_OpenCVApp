@@ -45,7 +45,6 @@ class OpenCVAnalyzer(private val listener: (Bitmap) -> Unit) : ImageAnalysis.Ana
 
 //       CoroutineScope(Dispatchers.IO).launch{
 
-           // Process the image
            val bitmap = bitmapBuffer.rotate()
 
            val mat = Mat()
