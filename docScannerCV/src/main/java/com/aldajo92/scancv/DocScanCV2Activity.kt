@@ -66,7 +66,7 @@ class DocScanCV2Activity : AppCompatActivity() {
 
         viewBinding.doneButton.setOnClickListener {
             imageResult?.let {
-                val imageUri = saveMediaToStorage(it, this)
+                val imageUri = saveMediaToStorage(it)
                 setResult(
                     Activity.RESULT_OK,
                     Intent().putExtra(PHOTO_IMAGE_BUNDLE_KEY, imageUri?.path)
@@ -164,6 +164,10 @@ class DocScanCV2Activity : AppCompatActivity() {
         const val PHOTO_IMAGE_BUNDLE_KEY = "PHOTO_IMAGE_BUNDLE_KEY"
 
         fun openCameraIntent(context: Context) = Intent(context, DocScanCV2Activity::class.java)
+
+        fun openCamera(context: Context) {
+            context.startActivity(openCameraIntent(context))
+        }
 
     }
 }
