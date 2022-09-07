@@ -29,7 +29,7 @@ private val requestPhotoResult = registerForActivityResult(
 }
 
 // ...
-requestPhotoResult.launch(DocScanCV2Activity.openCameraIntent(this))
+requestPhotoResult.launch(DocScanCV2Activity.openCameraIntent(context))
 ```
 
 Author:
