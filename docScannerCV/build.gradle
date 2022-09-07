@@ -111,7 +111,7 @@ android {
         externalNativeBuild {
             cmake {
                 arguments "-DANDROID_STL=c++_shared"
-                arguments "-DOpenCV_DIR=" + parent.projectDir.path + "/opencv46/native"
+                arguments "-DOpenCV_DIR=" + projectDir.path + "/native"
                 targets "native-lib"
                 cppFlags "-frtti -fexceptions"
                 abiFilters 'x86', 'x86_64', 'armeabi-v7a', 'arm64-v8a'
@@ -154,10 +154,7 @@ android {
     sourceSets {
         main {
             jniLibs.srcDirs = ['native/libs']
-//            java.srcDirs = ['java/src']
             aidl.srcDirs = ['src/main']
-//            res.srcDirs = ['java/res']
-//            manifest.srcFile 'java/AndroidManifest.xml'
         }
     }
 
