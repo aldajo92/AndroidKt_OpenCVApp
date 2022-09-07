@@ -14,6 +14,8 @@ class OpenCVAnalyzer(private val listener: (Bitmap) -> Unit) : ImageAnalysis.Ana
     private var width: Int = 0
     private var height: Int = 0
 
+    private var shapeDetected: Boolean = false
+
     private var pauseAnalysis = false
     private var rotationMatrix = android.graphics.Matrix().apply {
         postRotate(90f)
@@ -40,29 +42,33 @@ class OpenCVAnalyzer(private val listener: (Bitmap) -> Unit) : ImageAnalysis.Ana
         val mat = Mat()
         val bmp32 = bitmapBuffer.rotate().copy(Bitmap.Config.ARGB_8888, true)
         Utils.bitmapToMat(bmp32, mat)
-        detectShape(mat.nativeObjAddr)
+
+        shapeDetected = detectShape(mat.nativeObjAddr)
         Utils.matToBitmap(mat, bmp32)
         listener(bmp32)
     }
 
-    private fun Bitmap.rotate() =
-        Bitmap.createBitmap(this, 0, 0, this.width, this.height, rotationMatrix, true)
+    private fun Bitmap.rotate() = Bitmap.createBitmap(
+        this, 0, 0, this.width, this.height, rotationMatrix, true
+    )
 
     fun cropImageFromBitmap(listenerCropped: (Bitmap) -> Unit = { _ -> }) {
-        val mat = Mat()
-        val matResult = Mat()
-        val bmp32 = bitmapBuffer.rotate().copy(Bitmap.Config.ARGB_8888, true)
-        Utils.bitmapToMat(bmp32, mat)
+        if (shapeDetected) {
+            val mat = Mat()
+            val matResult = Mat()
+            val bmp32 = bitmapBuffer.rotate().copy(Bitmap.Config.ARGB_8888, true)
+            Utils.bitmapToMat(bmp32, mat)
 
-        detectShapeAndCropImage(mat.nativeObjAddr, matResult.nativeObjAddr)
-        val bmp =
-            Bitmap.createBitmap(matResult.width(), matResult.height(), Bitmap.Config.ARGB_8888)
-        Utils.matToBitmap(matResult, bmp)
+            detectShapeAndCropImage(mat.nativeObjAddr, matResult.nativeObjAddr)
+            val bmp =
+                Bitmap.createBitmap(matResult.width(), matResult.height(), Bitmap.Config.ARGB_8888)
+            Utils.matToBitmap(matResult, bmp)
 
-        listenerCropped(bmp)
+            listenerCropped(bmp)
+        }
     }
 
-    external fun detectShape(matAddress: Long)
+    external fun detectShape(matAddress: Long): Boolean
 
     external fun detectShapeAndCropImage(matAddress: Long, matResult: Long)
 }

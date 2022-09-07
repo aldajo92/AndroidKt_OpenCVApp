@@ -66,7 +66,7 @@ inline void cropImage(const cv::Mat &image, std::vector<cv::Point> &corners) {
 }
 
 extern "C" {
-void JNICALL
+JNIEXPORT jboolean
 Java_com_aldajo92_scancv_OpenCVAnalyzer_detectShape(JNIEnv *env,
                                                     jobject instance,
                                                     jlong matAddr) {
@@ -83,6 +83,8 @@ Java_com_aldajo92_scancv_OpenCVAnalyzer_detectShape(JNIEnv *env,
             cv::line(inputMat, corners[i - 1], corners[i], cv::Scalar(0, 255, 0), 3);
         }
     }
+
+    return corners.size() > 0;
 
 //    jobjectArray retobjarr = (jobjectArray)env->NewObjectArray(2, env->FindClass("java/lang/Object"), NULL);
 //    return retobjarr;
