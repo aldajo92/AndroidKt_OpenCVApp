@@ -52,7 +52,6 @@ class DocScanCV2Activity : AppCompatActivity() {
         val cameraProviderFuture = ProcessCameraProvider.getInstance(this)
 
         cameraProviderFuture.addListener({
-            // Used to bind the lifecycle of cameras to the lifecycle owner
             val cameraProvider: ProcessCameraProvider = cameraProviderFuture.get()
 
             val imageAnalyzer = ImageAnalysis.Builder()
@@ -122,7 +121,6 @@ class DocScanCV2Activity : AppCompatActivity() {
             System.loadLibrary("native-lib")
         }
         private const val TAG = "CameraXApp"
-        private const val FILENAME_FORMAT = "yyyy-MM-dd-HH-mm-ss-SSS"
         private const val REQUEST_CODE_PERMISSIONS = 10
         private val REQUIRED_PERMISSIONS =
             mutableListOf (
