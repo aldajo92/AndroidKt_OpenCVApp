@@ -1,9 +1,11 @@
 package com.aldajo92.scancv
 
 import android.Manifest
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.graphics.Bitmap
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
@@ -26,7 +28,16 @@ import java.util.concurrent.Executors
 class DocScanCV2Activity : AppCompatActivity() {
     private lateinit var viewBinding: ActivityDocScanV2Binding
     private lateinit var cameraExecutor: ExecutorService
-    private var ivBitmap: ImageView? = null
+
+    private lateinit var ivBitmap: ImageView
+
+    private var imageResult: Bitmap? = null
+
+    private val cvAnalyzer = OpenCVAnalyzer { bitmap ->
+        CoroutineScope(Dispatchers.Main).launch {
+            ivBitmap.setImageBitmap(bitmap)
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -44,9 +55,30 @@ class DocScanCV2Activity : AppCompatActivity() {
 
         ivBitmap = viewBinding.ivBitmap
 
+        viewBinding.button.setOnClickListener {
+            cvAnalyzer.cropImageFromBitmap { bitmapResult ->
+                CoroutineScope(Dispatchers.Main).launch {
+                    imageResult = bitmapResult
+                    viewBinding.ivResult.setImageBitmap(bitmapResult)
+                }
+            }
+        }
+
+        viewBinding.doneButton.setOnClickListener {
+            imageResult?.let {
+                val imageUri = saveMediaToStorage(it, this)
+                setResult(
+                    Activity.RESULT_OK,
+                    Intent().putExtra(PHOTO_IMAGE_BUNDLE_KEY, imageUri?.path)
+                )
+                finish()
+            }
+        }
+
         cameraExecutor = Executors.newSingleThreadExecutor()
 
     }
+
 
     private fun startCamera() {
         val cameraProviderFuture = ProcessCameraProvider.getInstance(this)
@@ -58,11 +90,7 @@ class DocScanCV2Activity : AppCompatActivity() {
                 .setOutputImageFormat(ImageAnalysis.OUTPUT_IMAGE_FORMAT_RGBA_8888)
                 .build()
                 .also {
-                    it.setAnalyzer(cameraExecutor, OpenCVAnalyzer { bitmap ->
-                        CoroutineScope(Dispatchers.Main).launch {
-                            ivBitmap?.setImageBitmap(bitmap)
-                        }
-                    })
+                    it.setAnalyzer(cameraExecutor, cvAnalyzer)
                 }
 
             try {
@@ -76,8 +104,8 @@ class DocScanCV2Activity : AppCompatActivity() {
                     imageAnalyzer
                 )
 
-            } catch(exc: Exception) {
-                Log.e(TAG, "Use case binding failed", exc)
+            } catch (exc: Exception) {
+                Log.e(this::class.java.name, "Use case binding failed", exc)
             }
 
         }, ContextCompat.getMainExecutor(this))
@@ -85,7 +113,8 @@ class DocScanCV2Activity : AppCompatActivity() {
 
     private fun allPermissionsGranted() = REQUIRED_PERMISSIONS.all {
         ContextCompat.checkSelfPermission(
-            baseContext, it) == PackageManager.PERMISSION_GRANTED
+            baseContext, it
+        ) == PackageManager.PERMISSION_GRANTED
     }
 
     override fun onDestroy() {
@@ -103,9 +132,11 @@ class DocScanCV2Activity : AppCompatActivity() {
             if (allPermissionsGranted()) {
                 startCamera()
             } else {
-                Toast.makeText(this,
+                Toast.makeText(
+                    this,
                     "Permissions not granted by the user.",
-                    Toast.LENGTH_SHORT).show()
+                    Toast.LENGTH_SHORT
+                ).show()
                 finish()
             }
         }
@@ -113,17 +144,15 @@ class DocScanCV2Activity : AppCompatActivity() {
 
     companion object {
         init {
-            if (!OpenCVLoader.initDebug())
-                Log.d("aldajo", "Unable to load OpenCV")
-            else
-                Log.d("aldajo", "OpenCV loaded")
-
+            if (!OpenCVLoader.initDebug()) Log.d(this::class.java.name, "Unable to load OpenCV")
+            else Log.d(this::class.java.name, "OpenCV loaded")
             System.loadLibrary("native-lib")
         }
-        private const val TAG = "CameraXApp"
+
         private const val REQUEST_CODE_PERMISSIONS = 10
+
         private val REQUIRED_PERMISSIONS =
-            mutableListOf (
+            mutableListOf(
                 Manifest.permission.CAMERA,
                 Manifest.permission.RECORD_AUDIO
             ).apply {
@@ -131,10 +160,10 @@ class DocScanCV2Activity : AppCompatActivity() {
                     add(Manifest.permission.WRITE_EXTERNAL_STORAGE)
                 }
             }.toTypedArray()
-        fun openCamera(context: Context){
-            context.startActivity(
-                Intent(context, DocScanCV2Activity::class.java)
-            )
-        }
+
+        const val PHOTO_IMAGE_BUNDLE_KEY = "PHOTO_IMAGE_BUNDLE_KEY"
+
+        fun openCameraIntent(context: Context) = Intent(context, DocScanCV2Activity::class.java)
+
     }
 }
