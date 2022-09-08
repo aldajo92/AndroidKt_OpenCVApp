@@ -3,16 +3,18 @@ package com.aldajo92.scancv
 import android.graphics.Bitmap
 import androidx.camera.core.ImageAnalysis
 import androidx.camera.core.ImageProxy
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import org.opencv.android.Utils
 import org.opencv.core.Mat
 
-class OpenCVAnalyzer(private val listener: (Bitmap) -> Unit) : ImageAnalysis.Analyzer {
+class OpenCVAnalyzer() : ImageAnalysis.Analyzer {
+
+    private val _bitmapStreamLiveData = MutableLiveData<Bitmap>()
+    val bitmapStreamLiveData: LiveData<Bitmap> = _bitmapStreamLiveData
 
     private lateinit var bitmapBuffer: Bitmap
     private var imageRotationDegrees: Int = 0
-
-    private var width: Int = 0
-    private var height: Int = 0
 
     private var shapeDetected: Boolean = false
 
@@ -22,14 +24,14 @@ class OpenCVAnalyzer(private val listener: (Bitmap) -> Unit) : ImageAnalysis.Ana
     }
 
     override fun analyze(image: ImageProxy) {
+
         if (!::bitmapBuffer.isInitialized) {
             imageRotationDegrees = image.imageInfo.rotationDegrees
             bitmapBuffer = Bitmap.createBitmap(
-                image.width, image.height, Bitmap.Config.ARGB_8888
+                image.width,
+                image.height,
+                Bitmap.Config.ARGB_8888
             )
-            width = image.width
-            height = image.height
-            bitmapBuffer
         }
 
         if (pauseAnalysis) {
@@ -45,7 +47,7 @@ class OpenCVAnalyzer(private val listener: (Bitmap) -> Unit) : ImageAnalysis.Ana
 
         shapeDetected = detectShape(mat.nativeObjAddr)
         Utils.matToBitmap(mat, bmp32)
-        listener(bmp32)
+        _bitmapStreamLiveData.postValue(bmp32)
     }
 
     private fun Bitmap.rotate() = Bitmap.createBitmap(
@@ -70,5 +72,5 @@ class OpenCVAnalyzer(private val listener: (Bitmap) -> Unit) : ImageAnalysis.Ana
 
     external fun detectShape(matAddress: Long): Boolean
 
-    external fun detectShapeAndCropImage(matAddress: Long, matResult: Long)
+    external fun detectShapeAndCropImage(matAddress: Long, matResult: Long): Boolean
 }

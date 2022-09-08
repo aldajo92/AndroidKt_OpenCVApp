@@ -15,9 +15,14 @@ import androidx.camera.core.ImageAnalysis
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.lifecycleScope
 import com.aldajo92.scancv.databinding.ActivityDocScanV2Binding
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.subscribe
 import kotlinx.coroutines.launch
 import org.opencv.android.OpenCVLoader
 import java.util.concurrent.ExecutorService
@@ -31,11 +36,7 @@ class DocScanCV2Activity : AppCompatActivity() {
     private lateinit var ivBitmap: ImageView
     private var imageResult: Bitmap? = null
 
-    private val cvAnalyzer = OpenCVAnalyzer { bitmap ->
-        CoroutineScope(Dispatchers.Main).launch {
-            ivBitmap.setImageBitmap(bitmap)
-        }
-    }
+    private val cvAnalyzer = OpenCVAnalyzer()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -51,7 +52,7 @@ class DocScanCV2Activity : AppCompatActivity() {
         cameraExecutor.shutdown()
     }
 
-    private fun requestPermissions(){
+    private fun requestPermissions() {
         if (allPermissionsGranted()) {
             startCamera()
         } else {
@@ -82,6 +83,10 @@ class DocScanCV2Activity : AppCompatActivity() {
             }
         }
         cameraExecutor = Executors.newSingleThreadExecutor()
+
+        cvAnalyzer.bitmapStreamLiveData.observe(this) { bitmap ->
+            bitmap?.let { ivBitmap.setImageBitmap(it) }
+        }
     }
 
 

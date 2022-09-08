@@ -84,14 +84,11 @@ Java_com_aldajo92_scancv_OpenCVAnalyzer_detectShape(JNIEnv *env,
         }
     }
 
-    return corners.size() > 0;
-
-//    jobjectArray retobjarr = (jobjectArray)env->NewObjectArray(2, env->FindClass("java/lang/Object"), NULL);
-//    return retobjarr;
+    return !corners.empty();
 
 }
 
-void JNICALL
+JNIEXPORT jboolean
 Java_com_aldajo92_scancv_OpenCVAnalyzer_detectShapeAndCropImage(JNIEnv *env,
                                                                 jobject instance,
                                                                 jlong matAddr,
@@ -104,37 +101,29 @@ Java_com_aldajo92_scancv_OpenCVAnalyzer_detectShapeAndCropImage(JNIEnv *env,
 
     findDocumentCorners(inputMat, corners);
 
-    cv::RotatedRect box = cv::minAreaRect(cv::Mat(corners)); // Get the min rectangle area
-    Point2f pts[4];
-    box.points(pts);
+    if(!corners.empty()){
+        cv::RotatedRect box = cv::minAreaRect(cv::Mat(corners)); // Get the min rectangle area
+        Point2f pts[4];
+        box.points(pts);
 
-    cv::Point2f src_vertices[3];
-    src_vertices[0] = pts[0];
-    src_vertices[1] = pts[1];
-    src_vertices[2] = pts[3];
-    //src_vertices[3] = not_a_rect_shape[3];
+        cv::Point2f src_vertices[3];
+        src_vertices[0] = pts[0];
+        src_vertices[1] = pts[1];
+        src_vertices[2] = pts[3];
+        //src_vertices[3] = not_a_rect_shape[3];
 
-    Point2f dst_vertices[3];
-    dst_vertices[0] = Point(0, 0);
-    dst_vertices[1] = Point(box.boundingRect().width-1, 0);
-    dst_vertices[2] = Point(0, box.boundingRect().height-1);
+        Point2f dst_vertices[3];
+        dst_vertices[0] = Point(0, 0);
+        dst_vertices[1] = Point(box.boundingRect().width-1, 0);
+        dst_vertices[2] = Point(0, box.boundingRect().height-1);
 
-    cv::Mat warpAffineMatrix = getAffineTransform(src_vertices, dst_vertices);
+        cv::Mat warpAffineMatrix = getAffineTransform(src_vertices, dst_vertices);
 
-    cv::Size size(box.boundingRect().width, box.boundingRect().height);
-    warpAffine(inputMat, resultInputMat, warpAffineMatrix, size, INTER_LINEAR, BORDER_CONSTANT);
-
-
-
-    // using perspective transform: http://opencvexamples.blogspot.com/2014/01/perspective-transform.html
-//    lambda = getPerspectiveTransform( inputQuad, outputQuad );
-//    // Apply the Perspective Transform just found to the src image
-//    warpPerspective(inputMat,resultInputMat,lambda,resultInputMat.size() );
-
-    // Setup a rectangle to define your region of interest
-    //    cv::Rect myROI(10, 10, 100, 100);
-    //    cv::Mat croppedRef(inputMat, myROI);
-    //
-    //    croppedRef.copyTo(resultInputMat);
+        cv::Size size(box.boundingRect().width, box.boundingRect().height);
+        warpAffine(inputMat, resultInputMat, warpAffineMatrix, size, INTER_LINEAR, BORDER_CONSTANT);
+        return true;
+    } else {
+        return false;
+    }
 }
 }
