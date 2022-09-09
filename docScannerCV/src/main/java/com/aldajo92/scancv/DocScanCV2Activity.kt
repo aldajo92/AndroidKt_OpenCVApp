@@ -31,11 +31,7 @@ class DocScanCV2Activity : AppCompatActivity() {
     private lateinit var ivBitmap: ImageView
     private var imageResult: Bitmap? = null
 
-    private val cvAnalyzer = OpenCVAnalyzer { bitmap ->
-        CoroutineScope(Dispatchers.Main).launch {
-            ivBitmap.setImageBitmap(bitmap)
-        }
-    }
+    private val cvAnalyzer = OpenCVAnalyzer()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -51,7 +47,7 @@ class DocScanCV2Activity : AppCompatActivity() {
         cameraExecutor.shutdown()
     }
 
-    private fun requestPermissions(){
+    private fun requestPermissions() {
         if (allPermissionsGranted()) {
             startCamera()
         } else {
@@ -63,14 +59,16 @@ class DocScanCV2Activity : AppCompatActivity() {
 
     private fun initUI() {
         ivBitmap = viewBinding.ivBitmap
-        viewBinding.button.setOnClickListener {
-            cvAnalyzer.cropImageFromBitmap { bitmapResult ->
+
+        viewBinding.takePhotoButton.setOnClickListener {
+            cvAnalyzer.bitmapStreamLiveData.value?.let {
                 CoroutineScope(Dispatchers.Main).launch {
-                    imageResult = bitmapResult
+                    val bitmapResult = cvAnalyzer.cropBitmapFromShapeDetected(it)
                     viewBinding.ivResult.setImageBitmap(bitmapResult)
                 }
             }
         }
+
         viewBinding.doneButton.setOnClickListener {
             imageResult?.let {
                 val imageUri = saveMediaToStorage(it)
@@ -81,7 +79,12 @@ class DocScanCV2Activity : AppCompatActivity() {
                 finish()
             }
         }
+
         cameraExecutor = Executors.newSingleThreadExecutor()
+
+        cvAnalyzer.bitmapStreamShapeDetectionLiveData.observe(this) { bitmap ->
+            bitmap?.let { ivBitmap.setImageBitmap(it) }
+        }
     }
 
 

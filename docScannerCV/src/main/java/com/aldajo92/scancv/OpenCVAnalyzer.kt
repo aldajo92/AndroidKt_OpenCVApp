@@ -3,18 +3,24 @@ package com.aldajo92.scancv
 import android.graphics.Bitmap
 import androidx.camera.core.ImageAnalysis
 import androidx.camera.core.ImageProxy
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import org.opencv.android.Utils
 import org.opencv.core.Mat
 
-class OpenCVAnalyzer(private val listener: (Bitmap) -> Unit) : ImageAnalysis.Analyzer {
+class OpenCVAnalyzer() : ImageAnalysis.Analyzer {
+
+    private val _bitmapStreamLiveData = MutableLiveData<Bitmap>()
+    val bitmapStreamLiveData: LiveData<Bitmap> = _bitmapStreamLiveData
+
+    private val _bitmapStreamShapeDetectionLiveData = MutableLiveData<Bitmap>()
+    val bitmapStreamShapeDetectionLiveData: LiveData<Bitmap> = _bitmapStreamShapeDetectionLiveData
+
+    private val _shapeDetectedLiveData = MutableLiveData(false)
+    val shapeDetectedLiveData: LiveData<Boolean> = _shapeDetectedLiveData
 
     private lateinit var bitmapBuffer: Bitmap
     private var imageRotationDegrees: Int = 0
-
-    private var width: Int = 0
-    private var height: Int = 0
-
-    private var shapeDetected: Boolean = false
 
     private var pauseAnalysis = false
     private var rotationMatrix = android.graphics.Matrix().apply {
@@ -25,11 +31,10 @@ class OpenCVAnalyzer(private val listener: (Bitmap) -> Unit) : ImageAnalysis.Ana
         if (!::bitmapBuffer.isInitialized) {
             imageRotationDegrees = image.imageInfo.rotationDegrees
             bitmapBuffer = Bitmap.createBitmap(
-                image.width, image.height, Bitmap.Config.ARGB_8888
+                image.width,
+                image.height,
+                Bitmap.Config.ARGB_8888
             )
-            width = image.width
-            height = image.height
-            bitmapBuffer
         }
 
         if (pauseAnalysis) {
@@ -38,37 +43,40 @@ class OpenCVAnalyzer(private val listener: (Bitmap) -> Unit) : ImageAnalysis.Ana
         }
 
         image.use { bitmapBuffer.copyPixelsFromBuffer(image.planes[0].buffer) }
-
-        val mat = Mat()
         val bmp32 = bitmapBuffer.rotate().copy(Bitmap.Config.ARGB_8888, true)
+        _bitmapStreamLiveData.postValue(bmp32)
+
+        //////////////////// image processing ////////////////////
+        val mat = Mat()
         Utils.bitmapToMat(bmp32, mat)
 
-        shapeDetected = detectShape(mat.nativeObjAddr)
+        val shapeDetectedFlag = detectShape(mat.nativeObjAddr)
+        _shapeDetectedLiveData.postValue(shapeDetectedFlag)
+
         Utils.matToBitmap(mat, bmp32)
-        listener(bmp32)
+        _bitmapStreamShapeDetectionLiveData.postValue(bmp32)
     }
 
     private fun Bitmap.rotate() = Bitmap.createBitmap(
         this, 0, 0, this.width, this.height, rotationMatrix, true
     )
 
-    fun cropImageFromBitmap(listenerCropped: (Bitmap) -> Unit = { _ -> }) {
-        if (shapeDetected) {
-            val mat = Mat()
-            val matResult = Mat()
-            val bmp32 = bitmapBuffer.rotate().copy(Bitmap.Config.ARGB_8888, true)
-            Utils.bitmapToMat(bmp32, mat)
+    fun cropBitmapFromShapeDetected(bitmap: Bitmap): Bitmap {
+        val mat = Mat()
+        val matResult = Mat()
+        val bmp32 = bitmap.copy(Bitmap.Config.ARGB_8888, true)
+        Utils.bitmapToMat(bmp32, mat)
 
-            detectShapeAndCropImage(mat.nativeObjAddr, matResult.nativeObjAddr)
-            val bmp =
-                Bitmap.createBitmap(matResult.width(), matResult.height(), Bitmap.Config.ARGB_8888)
-            Utils.matToBitmap(matResult, bmp)
-
-            listenerCropped(bmp)
-        }
+        val imageCropped = detectShapeAndCropImage(mat.nativeObjAddr, matResult.nativeObjAddr)
+        return if (imageCropped)
+            Bitmap.createBitmap(matResult.width(), matResult.height(), Bitmap.Config.ARGB_8888)
+                .apply {
+                    Utils.matToBitmap(matResult, this)
+                }
+        else bitmap
     }
 
     external fun detectShape(matAddress: Long): Boolean
 
-    external fun detectShapeAndCropImage(matAddress: Long, matResult: Long)
+    external fun detectShapeAndCropImage(matAddress: Long, matResult: Long): Boolean
 }
