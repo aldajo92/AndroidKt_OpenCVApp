@@ -41,7 +41,7 @@ class OpenCVAnalyzer() : ImageAnalysis.Analyzer {
 
         image.use { bitmapBuffer.copyPixelsFromBuffer(image.planes[0].buffer) }
         val bmp32 = bitmapBuffer.rotate90Degrees().copy(Bitmap.Config.ARGB_8888, true)
-        _bitmapStreamLiveData.postValue(bmp32)
+        _bitmapStreamLiveData.postValue(bmp32.copy(Bitmap.Config.ARGB_8888, false))
 
         //////////////////// image processing ////////////////////
         val mat = Mat()
