@@ -15,14 +15,9 @@ import androidx.camera.core.ImageAnalysis
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import androidx.lifecycle.LifecycleOwner
-import androidx.lifecycle.lifecycleScope
 import com.aldajo92.scancv.databinding.ActivityDocScanV2Binding
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.flow.subscribe
 import kotlinx.coroutines.launch
 import org.opencv.android.OpenCVLoader
 import java.util.concurrent.ExecutorService
@@ -64,14 +59,16 @@ class DocScanCV2Activity : AppCompatActivity() {
 
     private fun initUI() {
         ivBitmap = viewBinding.ivBitmap
-        viewBinding.button.setOnClickListener {
-            cvAnalyzer.cropImageFromBitmap { bitmapResult ->
+
+        viewBinding.takePhotoButton.setOnClickListener {
+            cvAnalyzer.bitmapStreamLiveData.value?.let {
                 CoroutineScope(Dispatchers.Main).launch {
-                    imageResult = bitmapResult
+                    val bitmapResult = cvAnalyzer.cropBitmapFromShapeDetected(it)
                     viewBinding.ivResult.setImageBitmap(bitmapResult)
                 }
             }
         }
+
         viewBinding.doneButton.setOnClickListener {
             imageResult?.let {
                 val imageUri = saveMediaToStorage(it)
@@ -82,9 +79,10 @@ class DocScanCV2Activity : AppCompatActivity() {
                 finish()
             }
         }
+
         cameraExecutor = Executors.newSingleThreadExecutor()
 
-        cvAnalyzer.bitmapStreamLiveData.observe(this) { bitmap ->
+        cvAnalyzer.bitmapStreamShapeDetectionLiveData.observe(this) { bitmap ->
             bitmap?.let { ivBitmap.setImageBitmap(it) }
         }
     }
