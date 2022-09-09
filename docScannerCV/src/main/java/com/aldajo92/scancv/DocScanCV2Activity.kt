@@ -29,7 +29,7 @@ class DocScanCV2Activity : AppCompatActivity() {
     private lateinit var cameraExecutor: ExecutorService
 
     private lateinit var ivBitmap: ImageView
-    private var imageResult: Bitmap? = null
+    private var bitmapResult: Bitmap? = null
 
     private val cvAnalyzer = OpenCVAnalyzer()
 
@@ -63,14 +63,14 @@ class DocScanCV2Activity : AppCompatActivity() {
         viewBinding.takePhotoButton.setOnClickListener {
             cvAnalyzer.bitmapStreamLiveData.value?.let {
                 CoroutineScope(Dispatchers.Main).launch {
-                    val bitmapResult = cvAnalyzer.cropBitmapFromShapeDetected(it)
+                    bitmapResult = cvAnalyzer.cropBitmapFromShapeDetected(it)
                     viewBinding.ivResult.setImageBitmap(bitmapResult)
                 }
             }
         }
 
         viewBinding.doneButton.setOnClickListener {
-            imageResult?.let {
+            bitmapResult?.let {
                 val imageUri = saveMediaToStorage(it)
                 setResult(
                     Activity.RESULT_OK,

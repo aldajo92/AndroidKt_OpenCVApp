@@ -23,9 +23,6 @@ class OpenCVAnalyzer() : ImageAnalysis.Analyzer {
     private var imageRotationDegrees: Int = 0
 
     private var pauseAnalysis = false
-    private var rotationMatrix = android.graphics.Matrix().apply {
-        postRotate(90f)
-    }
 
     override fun analyze(image: ImageProxy) {
         if (!::bitmapBuffer.isInitialized) {
@@ -43,7 +40,7 @@ class OpenCVAnalyzer() : ImageAnalysis.Analyzer {
         }
 
         image.use { bitmapBuffer.copyPixelsFromBuffer(image.planes[0].buffer) }
-        val bmp32 = bitmapBuffer.rotate().copy(Bitmap.Config.ARGB_8888, true)
+        val bmp32 = bitmapBuffer.rotate90Degrees().copy(Bitmap.Config.ARGB_8888, true)
         _bitmapStreamLiveData.postValue(bmp32)
 
         //////////////////// image processing ////////////////////
@@ -56,10 +53,6 @@ class OpenCVAnalyzer() : ImageAnalysis.Analyzer {
         Utils.matToBitmap(mat, bmp32)
         _bitmapStreamShapeDetectionLiveData.postValue(bmp32)
     }
-
-    private fun Bitmap.rotate() = Bitmap.createBitmap(
-        this, 0, 0, this.width, this.height, rotationMatrix, true
-    )
 
     fun cropBitmapFromShapeDetected(bitmap: Bitmap): Bitmap {
         val mat = Mat()
