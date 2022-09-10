@@ -67,7 +67,7 @@ inline void cropImage(const cv::Mat &image, std::vector<cv::Point> &corners) {
 
 extern "C" {
 JNIEXPORT jboolean
-Java_com_aldajo92_scancv_OpenCVAnalyzer_detectShape(JNIEnv *env,
+Java_com_aldajo92_scancv_BitmapUtilsKt_detectShape(JNIEnv *env,
                                                     jobject instance,
                                                     jlong matAddr) {
     cv::Mat &inputMat = *(cv::Mat *) matAddr;
@@ -89,7 +89,7 @@ Java_com_aldajo92_scancv_OpenCVAnalyzer_detectShape(JNIEnv *env,
 }
 
 JNIEXPORT jboolean
-Java_com_aldajo92_scancv_OpenCVAnalyzer_detectShapeAndCropImage(JNIEnv *env,
+Java_com_aldajo92_scancv_BitmapUtilsKt_detectShapeAndCropImage(JNIEnv *env,
                                                                 jobject instance,
                                                                 jlong matAddr,
                                                                 jlong resultAddr) {

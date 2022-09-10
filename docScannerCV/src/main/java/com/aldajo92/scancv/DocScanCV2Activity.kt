@@ -63,7 +63,7 @@ class DocScanCV2Activity : AppCompatActivity() {
         viewBinding.takePhotoButton.setOnClickListener {
             cvAnalyzer.bitmapStreamLiveData.value?.let {
                 CoroutineScope(Dispatchers.Main).launch {
-                    bitmapResult = cvAnalyzer.cropBitmapFromShapeDetected(it)
+                    bitmapResult = it.cropBitmapFromShapeDetected()
                     viewBinding.ivResult.setImageBitmap(bitmapResult)
                 }
             }

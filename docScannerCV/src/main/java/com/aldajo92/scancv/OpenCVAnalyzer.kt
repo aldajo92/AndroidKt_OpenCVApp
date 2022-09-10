@@ -1,6 +1,7 @@
 package com.aldajo92.scancv
 
 import android.graphics.Bitmap
+import android.graphics.Matrix
 import androidx.camera.core.ImageAnalysis
 import androidx.camera.core.ImageProxy
 import androidx.lifecycle.LiveData
@@ -20,13 +21,11 @@ class OpenCVAnalyzer() : ImageAnalysis.Analyzer {
     val shapeDetectedLiveData: LiveData<Boolean> = _shapeDetectedLiveData
 
     private lateinit var bitmapBuffer: Bitmap
-    private var imageRotationDegrees: Int = 0
-
-    private var pauseAnalysis = false
+    private lateinit var rotationDegreesMatrix: Matrix
 
     override fun analyze(image: ImageProxy) {
         if (!::bitmapBuffer.isInitialized) {
-            imageRotationDegrees = image.imageInfo.rotationDegrees
+            rotationDegreesMatrix = image.imageInfo.rotationDegrees.toFloat().getRotationMatrix()
             bitmapBuffer = Bitmap.createBitmap(
                 image.width,
                 image.height,
@@ -34,42 +33,13 @@ class OpenCVAnalyzer() : ImageAnalysis.Analyzer {
             )
         }
 
-        if (pauseAnalysis) {
-            image.close()
-            return
-        }
-
         image.use { bitmapBuffer.copyPixelsFromBuffer(image.planes[0].buffer) }
-        val bmp32 = bitmapBuffer.rotate90Degrees().copy(Bitmap.Config.ARGB_8888, true)
+        val bmp32 = bitmapBuffer.rotateWithMatrix(rotationDegreesMatrix).copy(Bitmap.Config.ARGB_8888, true)
         _bitmapStreamLiveData.postValue(bmp32.copy(Bitmap.Config.ARGB_8888, false))
 
-        //////////////////// image processing ////////////////////
-        val mat = Mat()
-        Utils.bitmapToMat(bmp32, mat)
-
-        val shapeDetectedFlag = detectShape(mat.nativeObjAddr)
-        _shapeDetectedLiveData.postValue(shapeDetectedFlag)
-
-        Utils.matToBitmap(mat, bmp32)
+        val bitmapWithShapes = bmp32.detectAndDrawShapes()
+        _shapeDetectedLiveData.postValue(bitmapWithShapes)
         _bitmapStreamShapeDetectionLiveData.postValue(bmp32)
     }
 
-    fun cropBitmapFromShapeDetected(bitmap: Bitmap): Bitmap {
-        val mat = Mat()
-        val matResult = Mat()
-        val bmp32 = bitmap.copy(Bitmap.Config.ARGB_8888, true)
-        Utils.bitmapToMat(bmp32, mat)
-
-        val imageCropped = detectShapeAndCropImage(mat.nativeObjAddr, matResult.nativeObjAddr)
-        return if (imageCropped)
-            Bitmap.createBitmap(matResult.width(), matResult.height(), Bitmap.Config.ARGB_8888)
-                .apply {
-                    Utils.matToBitmap(matResult, this)
-                }
-        else bitmap
-    }
-
-    external fun detectShape(matAddress: Long): Boolean
-
-    external fun detectShapeAndCropImage(matAddress: Long, matResult: Long): Boolean
 }
