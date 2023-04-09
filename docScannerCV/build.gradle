@@ -99,20 +99,18 @@ def openCVersionCode = ((4 * 100 + 6) * 100 + 0) * 10 + 0
 println "OpenCV: " +openCVersionName + " " + project.buildscript.sourceFile
 
 android {
-    compileSdkVersion 32
+    compileSdk 33
 
     defaultConfig {
         minSdkVersion 21
         targetSdkVersion 32
 
-        versionCode openCVersionCode
-        versionName openCVersionName
 
         externalNativeBuild {
             cmake {
                 arguments "-DANDROID_STL=c++_shared"
-                arguments "-DOpenCV_DIR=" + projectDir.path + "/native"
-                targets "native-lib"
+                arguments "-DOpenCV_DIR=" + project.rootDir.toString() + "/docScannerCV/native"
+                targets "nativecpp"
                 cppFlags "-frtti -fexceptions"
                 abiFilters 'x86', 'x86_64', 'armeabi-v7a', 'arm64-v8a'
             }
@@ -161,6 +159,7 @@ android {
     externalNativeBuild {
         cmake {
             path file('src/main/cpp/CMakeLists.txt')
+            version '3.22.1'
         }
     }
 }

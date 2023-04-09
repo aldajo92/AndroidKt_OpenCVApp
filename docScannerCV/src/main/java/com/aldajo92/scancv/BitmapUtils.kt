@@ -2,8 +2,6 @@ package com.aldajo92.scancv
 
 import android.graphics.Bitmap
 
-
-
 private var rotationMatrix = android.graphics.Matrix().apply {
     postRotate(90f)
 }

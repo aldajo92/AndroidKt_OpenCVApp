@@ -145,7 +145,7 @@ class DocScanCV2Activity : AppCompatActivity() {
         init {
             if (!OpenCVLoader.initDebug()) Log.d(this::class.java.name, "Unable to load OpenCV")
             else Log.d(this::class.java.name, "OpenCV loaded")
-            System.loadLibrary("native-lib")
+            System.loadLibrary("nativecpp")
         }
 
         const val PHOTO_IMAGE_BUNDLE_KEY = "PHOTO_IMAGE_BUNDLE_KEY"
